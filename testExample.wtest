@@ -1,9 +1,100 @@
-import example.pepita
+import example.*
 
-describe "group of tests for pepita" {
+describe "tets" {
+  const programacion = new carrera()
+  const TecnicaturaEnEconomíaSocial  = new carrera()
+  const TerapiaOcupacional = new carrera()
+  const alex = new estudiante()
+  const ElementosDeProgramacionYLogioca = new materia()
+  const matematica1 = new materia()
+  const objetos1 = new materia()
+  const objetos2 = new materia()
+  const objetos3 = new materia()
+  const baseDeDatos = new materia()
+  const programacionConcurrente = new materia()
 
-  test "pepita has initial energy" {
-    assert.equals(100, pepita.energy())
+  const MEyA = new materia()
+  const TyS = new materia()
+  const economia = new materia()
+  const desarrolloLocal = new materia()
+
+  const LEA = new materia()
+  const cienciasDeLaSalud = new materia()
+  const psicologia = new materia()
+  const antropologia = new materia()
+  const sociologia = new materia()
+
+  const matematica1nota2 = new cursada()
+  const objetos1nota10 = new cursada()
+  const economianota6 = new cursada()
+  const TySnota8 = new cursada()
+  const matematica1nota8 = new cursada()
+  const baseDeDatosnota2 = new cursada()
+
+  const historialDeAlex = new historialAcademico() 
+    
+    method initialize(){
+      programacion.agregarMateria(ElementosDeProgramacionYLogioca)
+      programacion.agregarMateria(matematica1)
+      programacion.agregarMateria(objetos1)
+      programacion.agregarMateria(objetos2)
+      programacion.agregarMateria(objetos3)
+      programacion.agregarMateria(baseDeDatos)
+      programacion.agregarMateria(programacionConcurrente)
+
+      TecnicaturaEnEconomíaSocial.agregarMateria(MEyA)
+      TecnicaturaEnEconomíaSocial.agregarMateria(TyS)
+      TecnicaturaEnEconomíaSocial.agregarMateria(economia)
+      TecnicaturaEnEconomíaSocial.agregarMateria(desarrolloLocal)
+
+      TerapiaOcupacional.agregarMateria(LEA)
+      TerapiaOcupacional.agregarMateria(cienciasDeLaSalud)
+      TerapiaOcupacional.agregarMateria(psicologia)
+      TerapiaOcupacional.agregarMateria(antropologia)
+      TerapiaOcupacional.agregarMateria(sociologia)
+
+      matematica1nota2.nota(2)
+      matematica1nota2.materia(matematica1)
+
+      objetos1nota10.nota(10)
+      objetos1nota10.materia(objetos1)
+
+      economianota6.nota(6)
+      economianota6.materia(economia)
+
+      TySnota8.nota(8)
+      TySnota8.materia(TyS)
+
+      matematica1nota8.nota(8)
+      matematica1nota8.materia(matematica1)
+
+      baseDeDatosnota2.nota(2)
+      baseDeDatosnota2.materia(baseDeDatos)
+
+      historialDeAlex.registrarCursada(matematica1nota2)
+      historialDeAlex.registrarCursada(objetos1nota10)
+      historialDeAlex.registrarCursada(economianota6)
+      historialDeAlex.registrarCursada(TySnota8)
+      historialDeAlex.registrarCursada(matematica1nota8)
+      historialDeAlex.registrarCursada(baseDeDatosnota2)
+
+      alex.agregarHistorial(historialDeAlex)
+    }
+  test "alex se anota a programacion y en tecnicaturaEnEconomiaSocial" {
+    alex.inscribirmeACarrera(programacion)
+    alex.inscribirmeACarrera(TecnicaturaEnEconomíaSocial)
+    assert.equals(#{programacion,TecnicaturaEnEconomíaSocial}, alex.carrerasInscriptas())
+    assert.equals(true,alex.materiaEsDeMisCarreras(baseDeDatos))
+    assert.equals(false,alex.materiaEsDeMisCarreras(psicologia))
   }
 
+  test "test punto 2"{
+    assert.equals(true, alex.tieneAprobada(matematica1))
+    assert.equals(false, alex.tieneAprobada(baseDeDatos))
+    assert.equals(9, alex.promedioAprobadasEn(programacion))
+    assert.equals(2, alex.cantidadAprobadasEn(programacion))
+    assert.equals(7, alex.promedioAprobadasEn(TecnicaturaEnEconomíaSocial))
+    assert.equals(8, alex.promedioAprobadas())
+    assert.equals([matematica1nota2,matematica1nota8], alex.cursadasDe(matematica1))
+  }
 }
