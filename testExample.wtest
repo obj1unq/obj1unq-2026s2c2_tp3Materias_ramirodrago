@@ -30,8 +30,13 @@ describe "tets" {
   const TySnota8 = new cursada()
   const matematica1nota8 = new cursada()
   const baseDeDatosnota2 = new cursada()
+  const matematica1nota10 = new cursada()
 
   const historialDeAlex = new historialAcademico() 
+  const historialDeAndy = new historialAcademico()
+
+  const andy = new estudiante()
+
     
     method initialize(){
       programacion.agregarMateria(ElementosDeProgramacionYLogioca)
@@ -52,6 +57,8 @@ describe "tets" {
       TerapiaOcupacional.agregarMateria(psicologia)
       TerapiaOcupacional.agregarMateria(antropologia)
       TerapiaOcupacional.agregarMateria(sociologia)
+      alex.inscribirmeACarrera(programacion)
+      alex.inscribirmeACarrera(TecnicaturaEnEconomíaSocial)
 
       matematica1nota2.nota(2)
       matematica1nota2.materia(matematica1)
@@ -77,8 +84,28 @@ describe "tets" {
       historialDeAlex.registrarCursada(TySnota8)
       historialDeAlex.registrarCursada(matematica1nota8)
       historialDeAlex.registrarCursada(baseDeDatosnota2)
+      
+      objetos2.requisitos(objetos1)
+      objetos2.requisitos(matematica1)
 
+      objetos3.requisitos(objetos2)
+      objetos3.requisitos(baseDeDatos)
+
+      programacionConcurrente.requisitos(objetos1)
+      programacionConcurrente.requisitos(baseDeDatos)
+
+      desarrolloLocal.requisitos(MEyA)
+      
       alex.agregarHistorial(historialDeAlex)
+
+      matematica1nota10.nota(10)
+      matematica1nota10.materia(matematica1)
+
+      andy.inscribirmeACarrera(programacion)
+      historialDeAndy.registrarCursada(matematica1nota10)
+      historialDeAndy.registrarCursada(objetos1nota10)
+
+      andy.agregarHistorial(historialDeAndy)
     }
   test "alex se anota a programacion y en tecnicaturaEnEconomiaSocial" {
     alex.inscribirmeACarrera(programacion)
@@ -97,4 +124,19 @@ describe "tets" {
     assert.equals(8, alex.promedioAprobadas())
     assert.equals([matematica1nota2,matematica1nota8], alex.cursadasDe(matematica1))
   }
-}
+
+  test "test punto 3"{
+    assert.equals(true, alex.puedeInscribirseA(objetos2))
+    assert.equals(#{objetos2,baseDeDatos,ElementosDeProgramacionYLogioca}, alex.materiasHabilitadasEnCarrera(programacion))
+    assert.equals(#{MEyA}, alex.materiasHabilitadasEnCarrera(TecnicaturaEnEconomíaSocial))
+    assert.throwsExceptionWithMessage("la materia no corresponde a mis carreras",{alex.inscribirmeAMateria(psicologia)})
+    assert.throwsExceptionWithMessage("la materia ya esta aprobada", { alex.inscribirmeAMateria(economia) })
+    assert.throwsExceptionWithMessage("no tiene aprobo los requisitos", { alex.inscribirmeAMateria(desarrolloLocal) })
+    alex.inscribirmeAMateria(objetos2)
+    assert.equals(true, alex.materiasInscriptas().contains(objetos2))
+    assert.throwsExceptionWithMessage("ya esta inscripto a la materia", { alex.inscribirmeAMateria(objetos2) })
+    andy.inscribirmeAMateria(objetos2)
+    assert.equals(#{alex,andy},programacion.estudiantes())
+  }
+  } 
+

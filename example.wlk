@@ -1,5 +1,5 @@
 class carrera{
-  var materias = []
+  var materias = #{}
   var estudiantes = #{}  
     method materias(){
       return materias
@@ -10,25 +10,41 @@ class carrera{
     method inscribirEstudiante(estudiante){
       estudiantes.add(estudiante)
     }
-    method inscribirEstudianteEnMisMaterias(estudiante){
-      materias.forEach({materia => materia.inscribirEstudiante(estudiante)})
-    }
     method estudiantes(){
       return estudiantes
+    }
+    method materiasHabilitadasParaEstudiante(estudiante){
+      return materias.filter({ materia => estudiante.puedeInscribirseA(materia)})
     }
 }
 class materia{
   var estudiantes = #{}
-  var carreraDeLAMateria = carrera
+  var requisitos = #{}
+  var carreraDeLaMateria = carrera
     method inscribirEstudiante(estudiante){
       estudiantes.add(estudiante)
     }
     method carrera(_carrera){
-      carreraDeLAMateria = _carrera
+      carreraDeLaMateria = _carrera
     }
     method carrera(){
-      return carreraDeLAMateria
+      return carreraDeLaMateria
     }
+    method requisitos(_requisito) {
+      requisitos.add(_requisito)
+    }
+    method requisitos(){
+      return requisitos
+    }
+}
+object correlativas{
+
+}
+object creditos{
+  
+}
+object sinRequisitos{
+  
 }
 
 class estudiante{
@@ -40,12 +56,31 @@ class estudiante{
       return nombre
     }
     method inscribirmeAMateria(materia){
-      materia.inscribirEstudiante()
-      materiasQueCurso.add(materia)
+      self.validarQueNoEsteIncriptoALaMateria(materia)
+      self.validarQueLaMateriaNoEsteAprobada(materia)
+      self.validarSiLaMateriaEsDeMisCarreras(materia)
+      self.validarQueTengaAprobadoSusRequisitos(materia)
+      materia.inscribirEstudiante(self)
+      materiasQueCurso.add(materia) 
+    }
+    method validarQueNoEsteIncriptoALaMateria(materia){
+      if ( self.estaInscriptoAMateria(materia) )
+        {self.error("ya esta inscripto a la materia")}
+    }
+    method validarQueLaMateriaNoEsteAprobada(materia){
+      if (self.tieneAprobada(materia)) 
+        {self.error("la materia ya esta aprobada")}
+    }
+    method validarSiLaMateriaEsDeMisCarreras(materia){
+      if(not self.materiaEsDeMisCarreras(materia))
+        {self.error("la materia no corresponde a mis carreras")}
+    }
+    method validarQueTengaAprobadoSusRequisitos(materia){
+      if(not self.tengoAprobadoSusRequisitos(materia)) 
+        {self.error("no tiene aprobo los requisitos")}
     }
     method inscribirmeACarrera(_carrera){
       _carrera.inscribirEstudiante(self)
-      _carrera.inscribirEstudianteEnMisMaterias(self)
       carrerasQueCurso.add(_carrera)
     }
     method carrerasInscriptas() {
@@ -101,6 +136,21 @@ class estudiante{
     }
     method tieneAprobada(materia){
       return historial.tieneAprobada(materia)
+    }
+    method estaInscriptoAMateria(materia){
+      return materiasQueCurso.contains(materia)
+    }
+    method tengoAprobadoSusRequisitos(materia){
+      return materia.requisitos().all({ requisito => self.tieneAprobada(requisito)})
+    }
+    method puedeInscribirseA(materia) {
+  return (self.materiaEsDeMisCarreras(materia) && 
+      not self.tieneAprobada(materia) && 
+      not self.estaInscriptoAMateria(materia) && 
+          self.tengoAprobadoSusRequisitos(materia))
+    }
+    method materiasHabilitadasEnCarrera(_carrera){
+      return _carrera.materiasHabilitadasParaEstudiante(self)
     }
 }
 class historialAcademico {
