@@ -6,6 +6,7 @@ class carrera{
     }
     method agregarMateria(materia){
       materias.add(materia)
+      materia.carrera(self)
     }
     method inscribirEstudiante(estudiante){
       estudiantes.add(estudiante)
@@ -19,8 +20,12 @@ class carrera{
 }
 class materia{
   var estudiantes = #{}
-  var requisitos = #{}
+  var requisitos = correlativas
+  var correlativas = #{}
+  var años = 1
+  var minimoDeCreditosRequeridos = 0
   var carreraDeLaMateria = carrera
+  var creditos = 0
     method inscribirEstudiante(estudiante){
       estudiantes.add(estudiante)
     }
@@ -30,28 +35,70 @@ class materia{
     method carrera(){
       return carreraDeLaMateria
     }
-    method requisitos(_requisito) {
-      requisitos.add(_requisito)
+    method correlativas(_correlativa) {
+      correlativas.add(_correlativa)
     }
-    method requisitos(){
-      return requisitos
+    method correlativas(){
+      return correlativas
+    }
+    method requisito(_requisito){
+      requisitos = _requisito
+    }
+    method estudiantes(){
+      return estudiantes
+    }
+    method añoDeLaMateria(_año){
+      años = _año
+    }
+    method años(){
+      return años
+    }
+    method cumpleRequisito(estudiante) {
+      return requisitos.cumpleRequisito(self, estudiante)
+    }
+    method minimoDeCreditosRequeridos(_cantidad) {
+      minimoDeCreditosRequeridos = _cantidad
+    }
+    method minimoDeCreditosRequeridos() {
+      return minimoDeCreditosRequeridos
+    }
+    method creditos(){
+      return creditos
+    }
+    method agregarCreditosQueDaLaMateria(cantidad){
+      creditos = cantidad
     }
 }
 object correlativas{
-
+  method cumpleRequisito(materia, estudiante){
+   return materia.correlativas().all({ requisito => estudiante.tieneAprobada(requisito)}) 
+    }
 }
 object creditos{
-  
+  method cumpleRequisito(materia, estudiante){
+    return estudiante.cantidadDeCreditosEn(materia.carrera()) >= materia.minimoDeCreditosRequeridos()
+  }
 }
 object sinRequisitos{
-  
+  method cumpleRequisito(materia, estudiante){
+    return true
+  }
+}
+object porAños {
+  method cumpleRequisito(materia, estudiante){
+    return estudiante.aprobeTodasLasDelAaño(materia)
+  }
 }
 
 class estudiante{
   var nombre = ""
   var materiasQueCurso = #{}  
   var carrerasQueCurso = #{}
-  var historial = ""  
+  var historial = ""
+  var creditosParaMaterias = 0 
+    method cantidadDeCreditos(){
+      return creditosParaMaterias
+    } 
     method nombre(){
       return nombre
     }
@@ -76,7 +123,7 @@ class estudiante{
         {self.error("la materia no corresponde a mis carreras")}
     }
     method validarQueTengaAprobadoSusRequisitos(materia){
-      if(not self.tengoAprobadoSusRequisitos(materia)) 
+      if(not self.tengoAprobadoSusCorrelativa(materia)) 
         {self.error("no tiene aprobo los requisitos")}
     }
     method inscribirmeACarrera(_carrera){
@@ -140,17 +187,23 @@ class estudiante{
     method estaInscriptoAMateria(materia){
       return materiasQueCurso.contains(materia)
     }
-    method tengoAprobadoSusRequisitos(materia){
-      return materia.requisitos().all({ requisito => self.tieneAprobada(requisito)})
+    method tengoAprobadoSusCorrelativa(materia){
+      return materia.cumpleRequisito(self)
     }
     method puedeInscribirseA(materia) {
   return (self.materiaEsDeMisCarreras(materia) && 
       not self.tieneAprobada(materia) && 
       not self.estaInscriptoAMateria(materia) && 
-          self.tengoAprobadoSusRequisitos(materia))
+          self.tengoAprobadoSusCorrelativa(materia))
     }
     method materiasHabilitadasEnCarrera(_carrera){
       return _carrera.materiasHabilitadasParaEstudiante(self)
+    }
+    method aprobeTodasLasDelAaño(materia){
+      return materia.carrera().materias().filter({ unaMateria => unaMateria.años() == materia.años() - 1}).all({ materiaAnterior =>self.tieneAprobada(materiaAnterior)})
+    }
+    method cantidadDeCreditosEn(_carrera) {
+      return _carrera.materias().filter({ unaMateria => self.tieneAprobada(unaMateria) }).sum({ unaMateria => unaMateria.creditos() })
     }
 }
 class historialAcademico {

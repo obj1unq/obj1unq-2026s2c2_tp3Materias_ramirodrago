@@ -36,6 +36,10 @@ describe "tets" {
   const historialDeAndy = new historialAcademico()
 
   const andy = new estudiante()
+  
+  const LEAnota10 = new cursada()
+  const antropologiaNota10 = new cursada()
+  const cienciasDeLaSaludNota10 = new cursada()
 
     
     method initialize(){
@@ -85,16 +89,16 @@ describe "tets" {
       historialDeAlex.registrarCursada(matematica1nota8)
       historialDeAlex.registrarCursada(baseDeDatosnota2)
       
-      objetos2.requisitos(objetos1)
-      objetos2.requisitos(matematica1)
+      objetos2.correlativas(objetos1)
+      objetos2.correlativas(matematica1)
 
-      objetos3.requisitos(objetos2)
-      objetos3.requisitos(baseDeDatos)
+      objetos3.correlativas(objetos2)
+      objetos3.correlativas(baseDeDatos)
 
-      programacionConcurrente.requisitos(objetos1)
-      programacionConcurrente.requisitos(baseDeDatos)
+      programacionConcurrente.correlativas(objetos1)
+      programacionConcurrente.correlativas(baseDeDatos)
 
-      desarrolloLocal.requisitos(MEyA)
+      desarrolloLocal.correlativas(MEyA)
       
       alex.agregarHistorial(historialDeAlex)
 
@@ -106,6 +110,48 @@ describe "tets" {
       historialDeAndy.registrarCursada(objetos1nota10)
 
       andy.agregarHistorial(historialDeAndy)
+      
+      LEA.añoDeLaMateria(1)
+      LEA.agregarCreditosQueDaLaMateria(8)
+      LEA.requisito(sinRequisitos)
+
+      cienciasDeLaSalud.añoDeLaMateria(1)
+      cienciasDeLaSalud.agregarCreditosQueDaLaMateria(8)
+      cienciasDeLaSalud.requisito(sinRequisitos)
+
+      psicologia.añoDeLaMateria(2)
+      psicologia.agregarCreditosQueDaLaMateria(4)
+      psicologia.requisito(porAños)
+
+      antropologia.añoDeLaMateria(2)
+      antropologia.agregarCreditosQueDaLaMateria(4)
+      antropologia.minimoDeCreditosRequeridos(8)
+      antropologia.requisito(creditos)
+
+      sociologia.añoDeLaMateria(3)
+      sociologia.agregarCreditosQueDaLaMateria(8)
+      sociologia.minimoDeCreditosRequeridos(10)
+      sociologia.requisito(creditos)
+
+      objetos1.añoDeLaMateria(1)
+      objetos1.agregarCreditosQueDaLaMateria(8)
+
+      matematica1.añoDeLaMateria(1)
+      matematica1.agregarCreditosQueDaLaMateria(8)
+
+      baseDeDatos.añoDeLaMateria(1)
+      baseDeDatos.agregarCreditosQueDaLaMateria(8)
+
+      andy.inscribirmeACarrera(TerapiaOcupacional)
+
+      LEAnota10.nota(10)
+      LEAnota10.materia(LEA)
+
+      antropologiaNota10.nota(10)
+      antropologiaNota10.materia(antropologia)
+
+      cienciasDeLaSaludNota10.nota(10)
+      cienciasDeLaSaludNota10.materia(cienciasDeLaSalud)
     }
   test "alex se anota a programacion y en tecnicaturaEnEconomiaSocial" {
     alex.inscribirmeACarrera(programacion)
@@ -138,5 +184,24 @@ describe "tets" {
     andy.inscribirmeAMateria(objetos2)
     assert.equals(#{alex,andy},programacion.estudiantes())
   }
-  } 
+  
+test "punto 4 - requisitos por creditos y año" {
+  assert.equals(#{LEA, cienciasDeLaSalud},andy.materiasHabilitadasEnCarrera(TerapiaOcupacional))
+  
+  andy.registrarCursada(LEAnota10)
+  assert.equals(#{cienciasDeLaSalud, antropologia},andy.materiasHabilitadasEnCarrera(TerapiaOcupacional))
+
+  andy.registrarCursada(antropologiaNota10)
+  assert.equals(#{cienciasDeLaSalud, sociologia},andy.materiasHabilitadasEnCarrera(TerapiaOcupacional))
+
+  andy.registrarCursada(cienciasDeLaSaludNota10)
+  assert.equals(#{psicologia, sociologia},andy.materiasHabilitadasEnCarrera(TerapiaOcupacional))
+
+  andy.inscribirmeAMateria(psicologia)
+  andy.inscribirmeAMateria(sociologia)
+
+  assert.equals(#{andy}, psicologia.estudiantes())
+  assert.equals(#{andy}, sociologia.estudiantes())
+  }
+} 
 
